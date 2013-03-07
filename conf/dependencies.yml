@@ -1,0 +1,9 @@
+# Application dependencies
+
+require:
+    - play
+    - play -> crud
+    - play -> morphia 1.2.12
+    - play -> betterlogs 1.0
+    - net.sourceforge.htmlcleaner -> htmlcleaner 2.2:
+        transitive: false
