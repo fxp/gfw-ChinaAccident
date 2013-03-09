@@ -49,17 +49,15 @@ public class Application extends Controller {
     }
 
     public static void index() throws XPatherException, ParseException {
-//        new JobController.FetchAccidentJob().now();
         List<Accident> ret = new ArrayList<Accident>();
-        Accident accident = Accident.q().first();
-        AccidentUtils.refineAccident(accident);
-        renderJSON(accident);
-//        List<Accident> accidents = Accident.findAll();
-//        for (Accident accident : accidents) {
-//            AccidentUtils.refineAccident(accident);
-//            ret.add(accident);
-//        }
-//        renderJSON(ret);
+        List<Accident> accidents = Accident.q().limit(2).fetchAll();
+        for (Accident accident : accidents) {
+            AccidentUtils.refineAccident(accident);
+            accident.save();
+        }
+//        renderJSON(accident);
+        render(accidents);
+
     }
 
 }

@@ -3,15 +3,12 @@ package controllers;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import models.Accident;
-import org.htmlcleaner.TagNode;
+import models.loc.Geo;
 import play.Logger;
-import play.jobs.Every;
-import play.jobs.Job;
 import play.libs.WS;
-import utils.PageUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,47 +31,31 @@ public class AccidentUtils {
         public String status;
     }
 
-    public static class Geo {
-        public List<AddressConponent> address_components;
-        public String formatted_address;
-
-    }
-
-    public static class AddressConponent {
-        public String long_name;
-        public String short_name;
-    }
-
-    public static void refineAccident(Accident accident) {
+    public static void refineAccident(Accident accident) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-        try {
-            Date date = sdf.parse(accident.dateText);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            accident.dateTime = date.getTime();
-            accident.year = cal.get(Calendar.YEAR);
-            accident.month = cal.get(Calendar.MONTH);
-            accident.day = cal.get(Calendar.DAY_OF_MONTH);
+        Date date = sdf.parse(accident.dateText);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        accident.dateTime = date.getTime();
+        accident.year = cal.get(Calendar.YEAR);
+        accident.month = cal.get(Calendar.MONTH);
+        accident.day = cal.get(Calendar.DAY_OF_MONTH);
 
-            String[] parts = accident.description.split("，");
-            accident.accurateDateText = parts[0];
-            accident.accurateDateTime = getAccurateTime(accident);
+        String[] parts = accident.description.split("，");
+        accident.accurateDateText = parts[0];
+        accident.accurateDateTime = getAccurateTime(accident);
 
-            accident.positionText = parts[1];
+        accident.positionText = parts[1];
 
-            JsonElement json = WS.url("http://maps.google.com/maps/api/geocode/json")
-                    .setParameter("address", accident.positionText)
-                    .setParameter("sensor", true)
-                    .setParameter("language", "zh-CN")
-                    .get().getJson();
-            Logger.info("json:%s", json.toString());
+        JsonElement json = WS.url("http://maps.google.com/maps/api/geocode/json")
+                .setParameter("address", accident.positionText)
+                .setParameter("sensor", true)
+                .setParameter("language", "zh-CN")
+                .get().getJson();
+        Logger.info("json:%s", json.toString());
 
-            GeoResult result = new Gson().fromJson(json, GeoResult.class);
-            accident.positionJson = new Gson().toJson(result);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        GeoResult result = new Gson().fromJson(json, GeoResult.class);
+        accident.geo = result.results.get(0);
     }
 
     private static Integer getHour(String accurateText) {

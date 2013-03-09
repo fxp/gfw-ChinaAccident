@@ -1,10 +1,8 @@
 package models;
 
 import com.google.code.morphia.annotations.Entity;
-import org.apache.commons.lang.StringUtils;
+import models.loc.Geo;
 import play.modules.morphia.Model;
-
-import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -49,6 +47,8 @@ public class Accident extends Model {
     public int deadCount;
 
     public String description;
+
+    public Geo geo;
 
     public Accident(String dateText, int deadCount, String description) {
         this.dateText = dateText;
