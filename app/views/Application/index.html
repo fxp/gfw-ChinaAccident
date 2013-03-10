@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="http://maps.googleapis.com/maps/api/js?sensor=true"/>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js"/>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
     <script>
-        function initialize() {
-            var defaultCenter = new google.maps.LatLng(35.424867, 103.502197);
+        $(function(){
+            function initialize() {
+                var defaultCenter = new google.maps.LatLng(35.424867, 103.502197);
 
-            var mapProp = {
-                center: defaultCenter,
-                zoom: 3,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                var mapProp = {
+                    center: defaultCenter,
+                    zoom: 3,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                }
+
+                var map = new google.maps.Map(document.getElementById("googleMap"), mapProp)
+                var accidents = $(".accident")
+                accidents.each(function (key, value) {
+                    console.log("accident")
+                    var myCenter = new google.maps.LatLng(
+                            $(value).attr("lat"),
+                            $(value).attr("lng")
+                    );
+                    var marker = new google.maps.Marker({
+                        position: myCenter
+                    });
+                    marker.setMap(map);
+                })
             }
 
-            var map = new google.maps.Map(document.getElementById("googleMap"), mapProp)
-            var accidents = $(".accident")
-            accidents.each(function (key, value) {
-                console.log("accident")
-                var myCenter = new google.maps.LatLng(
-                        $(value).attr("lat"),
-                        $(value).attr("lng")
-                );
-                var marker = new google.maps.Marker({
-                    position: myCenter
-                });
-                marker.setMap(map);
-            })
-        }
-
-        google.maps.event.addDomListener(window, 'load', initialize);
+            google.maps.event.addDomListener(window, 'load', initialize);
+        })
     </script>
 </head>
 

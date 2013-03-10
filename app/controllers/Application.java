@@ -50,7 +50,7 @@ public class Application extends Controller {
 
     public static void index() throws XPatherException, ParseException {
         List<Accident> ret = new ArrayList<Accident>();
-        List<Accident> accidents = Accident.q().limit(2).fetchAll();
+        List<Accident> accidents = Accident.q().limit(1).fetchAll();
         for (Accident accident : accidents) {
             AccidentUtils.refineAccident(accident);
             accident.save();

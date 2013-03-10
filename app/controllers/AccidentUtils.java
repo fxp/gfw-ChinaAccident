@@ -47,11 +47,14 @@ public class AccidentUtils {
 
         accident.positionText = parts[1];
 
-        JsonElement json = WS.url("http://maps.google.com/maps/api/geocode/json")
+        WS.WSRequest request = WS.url("https://maps.google.com/maps/api/geocode/json")
+                .setHeader("User-Agent", "User-Agent:Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57")
                 .setParameter("address", accident.positionText)
                 .setParameter("sensor", true)
-                .setParameter("language", "zh-CN")
-                .get().getJson();
+                .setParameter("key", "AIzaSyDZm4G-omt5aHpm83KLZ5zSEmyxCv1hGIw")
+                .setParameter("language", "zh-CN");
+        JsonElement json = request.get().getJson();
+        Logger.info("find location,%s", accident.positionText);
         Logger.info("json:%s", json.toString());
 
         GeoResult result = new Gson().fromJson(json, GeoResult.class);
