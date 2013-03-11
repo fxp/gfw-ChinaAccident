@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import models.Accident;
 import models.loc.Geo;
+import org.apache.commons.lang.StringUtils;
 import play.Logger;
 import play.libs.WS;
 
@@ -47,6 +48,7 @@ public class AccidentUtils {
 
         accident.positionText = parts[1];
 
+        Logger.info("positionText," + accident.positionText);
         WS.WSRequest request = WS.url("https://maps.google.com/maps/api/geocode/json")
                 .setHeader("User-Agent", "User-Agent:Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57")
                 .setParameter("address", accident.positionText)
@@ -54,11 +56,19 @@ public class AccidentUtils {
                 .setParameter("key", "AIzaSyDZm4G-omt5aHpm83KLZ5zSEmyxCv1hGIw")
                 .setParameter("language", "zh-CN");
         JsonElement json = request.get().getJson();
-        Logger.info("find location,%s", accident.positionText);
         Logger.info("json:%s", json.toString());
 
         GeoResult result = new Gson().fromJson(json, GeoResult.class);
-        accident.geo = result.results.get(0);
+        if (StringUtils.equals("OK", result.status)) {
+            if (result.results.size() > 0) {
+                accident.geo = result.results.get(0);
+                Logger.info("find location,%s,%s", accident.positionText,
+                        result.results.size());
+            } else {
+                Logger.info("cannot find location,%s,%s");
+            }
+        }
+
     }
 
     private static Integer getHour(String accurateText) {
