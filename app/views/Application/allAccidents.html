@@ -1,0 +1,33 @@
+#{extends 'main.html' /}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th class="span2">dateText</th>
+        <th class="span2">geo lat</th>
+        <th class="span2">geo lng</th>
+        <th class="span2">geo address</th>
+        <th class="span2">deadCount</th>
+        <th class="span2">description</th>
+    </tr>
+    </thead>
+    <tbody>
+    #{list items:accidents, as:"accident"}
+    <tr>
+        <td>${accident.dateText}</td>
+        #{if accident.geo !=null}
+            <td>${accident.geo.geometry.location.lat}</td>
+            <td>${accident.geo.geometry.location.lng}</td>
+            <td>${accident.geo.formatted_address}</td>
+        #{/if}
+        #{else}
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>N/A</td>
+        #{/else}
+        <td>${accident.deadCount}</td>
+        <td>${accident.description}</td>
+    </tr>
+    #{/list}
+    </tbody>
+</table>

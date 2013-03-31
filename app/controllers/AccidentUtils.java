@@ -48,12 +48,10 @@ public class AccidentUtils {
 
         accident.positionText = parts[1];
 
-        Logger.info("positionText," + accident.positionText);
         WS.WSRequest request = WS.url("https://maps.google.com/maps/api/geocode/json")
-                .setHeader("User-Agent", "User-Agent:Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57")
-                .setParameter("address", accident.positionText)
                 .setParameter("sensor", true)
-                .setParameter("key", "AIzaSyDZm4G-omt5aHpm83KLZ5zSEmyxCv1hGIw")
+                .setParameter("address", accident.positionText)
+//                .setParameter("key", "AIzaSyApKCTEfKBd77pz0IJZErlHCLRlSZY_fII")
                 .setParameter("language", "zh-CN");
         JsonElement json = request.get().getJson();
         Logger.info("json:%s", json.toString());
@@ -64,9 +62,9 @@ public class AccidentUtils {
                 accident.geo = result.results.get(0);
                 Logger.info("find location,%s,%s", accident.positionText,
                         result.results.size());
-            } else {
-                Logger.info("cannot find location,%s,%s");
             }
+        } else if (StringUtils.equals("ZERO_RESULTS", result.status)) {
+            Logger.info("cannot find location,%s,%s",accident.positionText,accident.description);
         }
 
     }

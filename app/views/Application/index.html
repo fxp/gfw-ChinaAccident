@@ -1,69 +1,124 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <script src="http://maps.googleapis.com/maps/api/js"/>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>
-    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+#{extends 'main.html' /}
 
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-    <script>
-        $(function(){
-            function initialize() {
-                var defaultCenter = new google.maps.LatLng(35.424867, 103.502197);
+<style type="text/css">
 
-                var mapProp = {
-                    center: defaultCenter,
-                    zoom: 3,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
+    #page {
+        height: 100%;
+    }
+
+    #pagecontent {
+        height: 100%;
+    }
+
+    #map-canvas, #map_canvas {
+        height: 100%;
+    }
+
+    #map-canvas img {
+        max-width: none !important;
+    }
+
+    #infotable {
+        margin-top: 20px;
+    }
+
+</style>
+
+<script>
+    jQuery(function () {
+
+        function initialize() {
+            var settingsItemsMap = {
+                zoom: 4,
+                center: new google.maps.LatLng(35.424867, 103.502197),
+                zoomControlOptions: {
+                    style: google.maps.ZoomControlStyle.LARGE
+                },
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById('map-canvas'), settingsItemsMap);
+
+            var accidentElements = document.getElementsByClassName('accident')
+            var accidents = new Array()
+            for (var i = 0; i < accidentElements.length; i++) {
+                var accident = accidentElements[i]
+                accidents[i] = {
+                    lat: accident.getAttribute('lat'),
+                    lng: accident.getAttribute('lng'),
+                    deadCount: accident.getAttribute('deadCount'),
+                    desc: accident.getAttribute('desc')
                 }
-
-                var map = new google.maps.Map(document.getElementById("googleMap"), mapProp)
-                var accidents = $(".accident")
-                accidents.each(function (key, value) {
-                    console.log("accident")
-                    var myCenter = new google.maps.LatLng(
-                            $(value).attr("lat"),
-                            $(value).attr("lng")
-                    );
-                    var marker = new google.maps.Marker({
-                        position: myCenter
-                    });
-                    marker.setMap(map);
-                })
+                console.log('acc,' + JSON.stringify(accidents[i]))
             }
+            for (var i = 0; i < accidents.length; i++) {
+                var accident = accidents[i]
+                var infowindow = new google.maps.InfoWindow({
+                    content: accident.desc,
+                    maxWidth: 300
+                })
+                var myMarker = new google.maps.Marker({
+                    position: new google.maps.LatLng(accident.lat, accident.lng)
+                })
 
-            google.maps.event.addDomListener(window, 'load', initialize);
-        })
-    </script>
-</head>
+                google.maps.event.addListener(myMarker, 'click', (function (event, index) {
+                    return function () {
+                        infowindow.content = accidents[index].desc + "<br>"
+                        infowindow.open(map, this);
+                    }
+                })(myMarker, i))
 
-<body>
-<div class="navbar">
-    <div class="navbar-inner">
-        <a class="brand" href="#">Title</a>
-        <ul class="nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Link</a></li>
-            <li><a href="#">Link</a></li>
-        </ul>
-    </div>
+                myMarker.setMap(map);
+            }
+        }
+
+        initialize()
+    })
+
+</script>
+
+<div id="map-canvas" style="height:400px"></div>
+
+<div style="text-align: center" class="pagination">
+    <ul>
+    #{if page>1}
+        <li class="previous">
+            <a href="@{Application.index(page-1)}"><img src="/public/flatui/images/pager/previous.png"/></a>
+        </li>
+    #{/if}
+        <li class="active"><a>${page}</a></li>
+    #{if size == accidents.size()}
+        <li class="next">
+            <a href="@{Application.index(page+1)}"><img src="/public/flatui/images/pager/next.png"/></a>
+        </li>
+    #{/if}
+    </ul>
 </div>
-<div class="container">
-    <div class="row">
-        <div id="googleMap" style="width:500px;height:380px;"></div>
-    #{list items:accidents, as:"accident"}
-        <div class="accident"
-             lat='${accident.geo.geometry.location.lat}'
-             lng='${accident.geo.geometry.location.lng}'
-             addr='${accident.geo.formatted_address}'>
-        ${accident.geo.formatted_address},
-        ${accident.geo.geometry.location.lat},
-        ${accident.geo.geometry.location.lng}
-        </div>
-    #{/list}
-    </div>
+
+<div id="infotable">
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="span2">发生时间</th>
+            <th class="span2">伤亡人数</th>
+            <th>事故描述</th>
+        </tr>
+        </thead>
+        <tbody>
+        #{list items:accidents, as:"accident"}
+        <tr class="accident"
+            dateText='${accident.dateText}'
+            desc='${accident.description}'
+            addr='${accident.geo.formatted_address}'
+            deadCount='${accident.deadCount}'
+            lat='${accident.geo.geometry.location.lat}'
+            lng='${accident.geo.geometry.location.lng}'
+                >
+            <td>${accident.dateText}</td>
+            <td>${accident.deadCount}</td>
+            <td>${accident.description}</td>
+        </tr>
+        #{/list}
+        </tbody>
+    </table>
+
 </div>
-</body>
-</html>
-
-
