@@ -4,6 +4,9 @@ import com.google.code.morphia.annotations.Entity;
 import models.loc.Geo;
 import play.modules.morphia.Model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: fxp
@@ -49,6 +52,12 @@ public class Accident extends Model {
     public String description;
 
     public Geo geo;
+
+    /**
+     * Tags
+     */
+
+    public List<String> tags = new ArrayList<String>();
 
     public Accident(String dateText, int deadCount, String description) {
         this.dateText = dateText;
