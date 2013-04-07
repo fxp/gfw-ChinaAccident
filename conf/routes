@@ -3,6 +3,7 @@
 # ~~~~
 
 # Home page
+GET     /admindata                      module:crud
 GET     /accident/{action}                      Application.{action}
 
 # Ignore favicon requests

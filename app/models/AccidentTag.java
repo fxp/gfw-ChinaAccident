@@ -1,30 +1,22 @@
 package models;
 
+import com.google.code.morphia.annotations.Entity;
+import play.modules.morphia.Model;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * User: fxp
  * Date: 13-4-6
  * Time: PM3:41
  */
-public class AccidentTag {
+@Entity
+public class AccidentTag extends Model {
 
-    public static final Map<String, List<String>> TAGS = new HashMap<String, List<String>>() {{
-        put("carcrash", new ArrayList<String>() {{
-
-        }});
-        put("mine", new ArrayList<String>() {{
-
-        }});
-        put("gas", new ArrayList<String>() {{
-
-        }});
-        put("building", new ArrayList<String>() {{
-
-        }});
-    }};
+    public String tag;
+    public Set<String> related = new HashSet<String>();
 
 }

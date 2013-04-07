@@ -59,6 +59,10 @@ public class Application extends Controller {
 
     public static List<Accident> cachedAccidents = null;
 
+    public static void test(){
+        render();
+    }
+
     public static void index(int page) throws XPatherException, ParseException {
         page = (page <= 0) ? 1 : page;
         int size = 10;
