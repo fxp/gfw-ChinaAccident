@@ -1,6 +1,7 @@
 package controllers.admin;
 
 import controllers.CRUD;
+import models.AccidentTag;
 import org.apache.commons.io.FileUtils;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
@@ -28,6 +29,14 @@ public class AccidentTags extends CRUD {
                 line = line.substring(splitPos + 1);
                 String[] parts = line.split(",");
                 System.out.println("tag:" + tag + ",line:" + line);
+                AccidentTag atag = AccidentTag.q().filter("tag", tag).get();
+                if (atag == null) {
+                    atag = new AccidentTag(tag);
+                }
+                for (String part : parts) {
+                    atag.related.add(part);
+                }
+                atag.save();
             }
         }
     }

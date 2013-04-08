@@ -19,4 +19,7 @@ public class AccidentTag extends Model {
     public String tag;
     public Set<String> related = new HashSet<String>();
 
+    public AccidentTag(String tag) {
+        this.tag = tag;
+    }
 }
