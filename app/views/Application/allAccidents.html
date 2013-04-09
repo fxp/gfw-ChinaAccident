@@ -4,11 +4,12 @@
     <thead>
     <tr>
         <th class="span2">dateText</th>
-        <th class="span2">geo lat</th>
-        <th class="span2">geo lng</th>
+        <th class="span1">geo lat</th>
+        <th class="span1">geo lng</th>
         <th class="span2">geo address</th>
         <th class="span2">deadCount</th>
         <th class="span2">description</th>
+        <th class="span2">tag</th>
     </tr>
     </thead>
     <tbody>
@@ -27,6 +28,7 @@
         #{/else}
         <td>${accident.deadCount}</td>
         <td>${accident.description}</td>
+        <td>${accident.tags}</td>
     </tr>
     #{/list}
     </tbody>

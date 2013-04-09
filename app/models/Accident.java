@@ -5,7 +5,9 @@ import models.loc.Geo;
 import play.modules.morphia.Model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -57,7 +59,7 @@ public class Accident extends Model {
      * Tags
      */
 
-    public List<String> tags = new ArrayList<String>();
+    public Set<String> tags = new HashSet<String>();
 
     public Accident(String dateText, int deadCount, String description) {
         this.dateText = dateText;

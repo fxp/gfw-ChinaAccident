@@ -3,6 +3,7 @@ package controllers;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import models.Accident;
+import models.AccidentTag;
 import models.loc.Geo;
 import org.apache.commons.lang.StringUtils;
 import play.Logger;
@@ -10,10 +11,7 @@ import play.libs.WS;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,12 +26,12 @@ public class AccidentUtils {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
-    public static class GeoResult {
-        public List<Geo> results;
-        public String status;
-    }
-
     public static void refineAccident(Accident accident) throws ParseException {
+        Set<AccidentTag> tags = extractTag(accident.description);
+        for (AccidentTag tag : tags) {
+            accident.tags.add(tag.tag);
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         Date date = sdf.parse(accident.dateText);
         Calendar cal = Calendar.getInstance();
@@ -65,9 +63,8 @@ public class AccidentUtils {
                         result.results.size());
             }
         } else if (StringUtils.equals("ZERO_RESULTS", result.status)) {
-            Logger.info("cannot find location,%s,%s",accident.positionText,accident.description);
+            Logger.info("cannot find location,%s,%s", accident.positionText, accident.description);
         }
-
     }
 
     private static Integer getHour(String accurateText) {
@@ -109,6 +106,27 @@ public class AccidentUtils {
             Logger.debug("get accurate minute,%s", minute);
         }
         return cal.getTimeInMillis();
+    }
+
+    public static Set<AccidentTag> extractTag(String content) {
+        Set<AccidentTag> ret = new HashSet<AccidentTag>();
+        List<AccidentTag> tags = AccidentTag.findAll();
+
+        for (AccidentTag tag : tags) {
+            for (String rel : tag.related) {
+                if (content.contains(rel)) {
+                    ret.add(tag);
+                    break;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    public static class GeoResult {
+        public List<Geo> results;
+        public String status;
     }
 
 

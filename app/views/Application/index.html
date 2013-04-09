@@ -76,22 +76,15 @@
 
 </script>
 
-<div id="map-canvas" style="height:400px"></div>
 
-<div style="text-align: center" class="pagination">
-    <ul>
-    #{if page>1}
-        <li class="previous">
-            <a href="@{Application.index(page-1)}"><img src="/public/flatui/images/pager/previous.png"/></a>
-        </li>
-    #{/if}
-        <li class="active"><a>${page}</a></li>
-    #{if size == accidents.size()}
-        <li class="next">
-            <a href="@{Application.index(page+1)}"><img src="/public/flatui/images/pager/next.png"/></a>
-        </li>
-    #{/if}
-    </ul>
+<div class="btn-toolbar">
+    <div class="btn-group">
+        <a class="btn btn-primary #{if "all".equals(currentTag)}active#{/if}" href="@{Application.index(1)}">all</a>
+    #{list items:tags,as:"tag"}
+        <a class="btn btn-primary #{if tag.tag.equals(currentTag)}active#{/if}"
+           href="@{Application.index(1,tag.tag)}">${tag.tag}</a>
+    #{/list}
+    </div>
 </div>
 
 <div id="infotable">
@@ -99,8 +92,8 @@
         <thead>
         <tr>
             <th class="span2">发生时间</th>
-            <th class="span2">伤亡人数</th>
-            <th>事故描述</th>
+            <th class="span2">死亡</th>
+            <th class="span8">事故描述</th>
         </tr>
         </thead>
         <tbody>
@@ -122,3 +115,21 @@
     </table>
 
 </div>
+
+<div style="text-align: center" class="pagination">
+    <ul>
+    #{if page>1}
+        <li class="previous">
+            <a href="@{Application.index(page-1)}"><img src="/public/flatui/images/pager/previous.png"/></a>
+        </li>
+    #{/if}
+        <li class="active"><a>${page}</a></li>
+    #{if size == accidents.size()}
+        <li class="next">
+            <a href="@{Application.index(page+1)}"><img src="/public/flatui/images/pager/next.png"/></a>
+        </li>
+    #{/if}
+    </ul>
+</div>
+
+<div id="map-canvas" style="height:400px"></div>
